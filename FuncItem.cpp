@@ -4,7 +4,7 @@
 
 #include "FuncItem.h"
 
-FuncItem::FuncItem(Context *(*func)(Context *), int wokerNum) {
+FuncItem::FuncItem(std::function<Context (Context)> func, int wokerNum) {
     this->func = func;
     this->wokerNum = wokerNum;
 }

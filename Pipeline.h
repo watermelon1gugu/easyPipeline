@@ -26,7 +26,7 @@ private:
 
     explicit Pipeline(std::list<FuncItem> funcItems);
 
-    static void _worker(Context(*func)(Context), BlockingQueue<Context> &&inQueue, BlockingQueue<Context> &&outQueue);
+    static void _worker(std::function<Context (Context)> func, BlockingQueue<Context> &&inQueue, BlockingQueue<Context> &&outQueue);
 
     void _start();
 

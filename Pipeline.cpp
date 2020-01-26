@@ -18,7 +18,7 @@ void Pipeline::resultFilter(Context context) {
 
 }
 
-void Pipeline::_worker(Context(*func)(Context), BlockingQueue<Context> &&inQueue, BlockingQueue<Context> &&outQueue) {
+void Pipeline::_worker(std::function<Context (Context)> func, BlockingQueue<Context> &&inQueue, BlockingQueue<Context> &&outQueue) {
     try {
         while(true){
             Context context = inQueue.get();

@@ -10,9 +10,9 @@
 
 class FuncItem {
 public:
-    FuncItem(Context* (*func)(Context*),int wokerNum);
+    FuncItem(std::function<Context (Context)> func,int wokerNum);
 private:
-    Context* (*func)(Context*);
+    std::function<Context (Context)> func;
     int wokerNum;
 };
 
