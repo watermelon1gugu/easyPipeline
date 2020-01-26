@@ -11,12 +11,15 @@ int Pipeline::putTask(Context context) {
 }
 
 Pipeline::Pipeline(std::list<FuncItem> funcItems) {
+    int steps = funcItems.size();
+    contextQueueList = std::list<std::queue<Context>>
+    this->contextQueueList =
+}
+
+void Pipeline::endFilter(Context context) {
 
 }
 
-void Pipeline::resultFilter(Context context) {
-
-}
 
 void Pipeline::_worker(std::function<Context (Context)> func, BlockingQueue<Context> &&inQueue, BlockingQueue<Context> &&outQueue) {
     try {

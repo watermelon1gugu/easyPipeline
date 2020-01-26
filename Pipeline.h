@@ -22,7 +22,7 @@ public:
     int putTask(Context context);
 
 private:
-    void resultFilter(Context context);
+    void endFilter(Context context);
 
     explicit Pipeline(std::list<FuncItem> funcItems);
 
@@ -32,7 +32,7 @@ private:
 
     std::list<FuncItem> funcItems;
     std::list<std::queue<Context*>> contextQueueList;
-
+    std::queue<Context*>* endProductQueue;
 };
 //class PipelineWarp{
 //public:
