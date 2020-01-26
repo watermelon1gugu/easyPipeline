@@ -19,7 +19,6 @@ public:
 
 private:
     int workerNum;
-    T func;
 };
 
 class NormalWorkerFuncItem : public FuncItem<std::function<Context(Context &)>> {
