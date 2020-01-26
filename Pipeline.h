@@ -17,28 +17,36 @@
 #include <list>
 #include <queue>
 
-class Pipeline {
-public:
-    int putTask(Context context);
+namespace easyPipeline {
+    class Pipeline {
+    public:
+        int putTask(Context &context);
 
-private:
-    void endFilter(Context context);
+    private:
+        static void endFilter(Context &context);
 
-    explicit Pipeline(std::list<FuncItem> funcItems);
+        explicit Pipeline(std::list<FuncItem> &funcItems);
 
-    static void _worker(std::function<Context (Context)> func, BlockingQueue<Context> &&inQueue, BlockingQueue<Context> &&outQueue);
+        static void _worker(const std::function<Context(Context)> &func, BlockingQueue<Context> &inQueue,
+                            BlockingQueue<Context> &outQueue);
 
-    void _start();
+        void endFilterWrapper(Context &context);
 
-    std::list<FuncItem> funcItems;
-    std::list<std::queue<Context*>> contextQueueList;
-    std::queue<Context*>* endProductQueue;
-};
+        void _start();
+
+        unsigned long stepNum;
+        unsigned long queueNum;
+        std::list<FuncItem> &funcItems;
+        std::list<BlockingQueue<Context &>> contextQueueList;
+        BlockingQueue<Context &> &inputQueue;
+        BlockingQueue<Context &> &endProductQueue;
+    };
+
 //class PipelineWarp{
 //public:
 //    PipelineWarp firstStep();
 //
 //private:
 //};
-
+}
 #endif //SCURMVISION_BASE_PIPELINE_H

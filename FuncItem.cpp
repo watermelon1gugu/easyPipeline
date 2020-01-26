@@ -4,7 +4,17 @@
 
 #include "FuncItem.h"
 
-FuncItem::FuncItem(std::function<Context (Context)> func, int wokerNum) {
-    this->func = func;
+#include <utility>
+
+FuncItem::FuncItem(std::function<Context(Context)> func, int wokerNum) {
+    this->func = std::move(func);
     this->wokerNum = wokerNum;
+}
+
+int FuncItem::getWokerNum() {
+    return this->wokerNum;
+}
+
+std::function<Context(Context)> FuncItem::getFunc() {
+    return this->func;
 }
