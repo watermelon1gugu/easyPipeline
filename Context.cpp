@@ -2,6 +2,7 @@
 // Created by archchen on 2020/1/25.
 //
 
+#include <iostream>
 #include "Context.h"
 
 bool Context::isContinue() {
@@ -14,4 +15,9 @@ void Context::breakOff() {
 
 std::unordered_map<std::string, void *> *Context::getGlobalParam() {
     return &(this->_globalParam);
+}
+
+void Context::free() {
+    //TODO 释放globalParam内存
+    std::cout<<""<<std::endl;
 }

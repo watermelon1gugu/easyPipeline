@@ -20,23 +20,24 @@
 namespace easyPipeline {
     class Pipeline {
     public:
+        explicit Pipeline(std::list<NormalWorkerFuncItem> &funcItems, EndFileterFuncItem  endFilterFuncItem);
         int putTask(Context &context);
 
     private:
-        static void endFilter(Context &context);
 
-        explicit Pipeline(std::list<FuncItem> &funcItems);
+        static std::function<Context(Context &)> _normalEndFilter(Context& context);
+        static void _worker(const std::function<Context(Context&)> &func, BlockingQueue<Context&> &inQueue,
+                            BlockingQueue<Context&> &outQueue);
 
-        static void _worker(const std::function<Context(Context)> &func, BlockingQueue<Context> &inQueue,
-                            BlockingQueue<Context> &outQueue);
-
-        void endFilterWrapper(Context &context);
+        void endFilterWrap();
 
         void _start();
 
+
         unsigned long stepNum;
         unsigned long queueNum;
-        std::list<FuncItem> &funcItems;
+        EndFileterFuncItem endFilterFuncItem;        //默认调用context的析构函数以及清理所有垃圾
+        std::list<NormalWorkerFuncItem> &funcItems;
         std::list<BlockingQueue<Context &>> contextQueueList;
         BlockingQueue<Context &> &inputQueue;
         BlockingQueue<Context &> &endProductQueue;

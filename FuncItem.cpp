@@ -6,15 +6,28 @@
 
 #include <utility>
 
-FuncItem::FuncItem(std::function<Context(Context)> func, int wokerNum) {
+NormalWorkerFuncItem::NormalWorkerFuncItem(std::function<Context(Context &)> func, int workerNum) : FuncItem(workerNum) {
     this->func = std::move(func);
-    this->wokerNum = wokerNum;
 }
 
-int FuncItem::getWokerNum() {
-    return this->wokerNum;
-}
-
-std::function<Context(Context)> FuncItem::getFunc() {
+std::function<Context(Context &)> NormalWorkerFuncItem::getFunc() {
     return this->func;
 }
+
+
+std::function<void(Context &)> EndFileterFuncItem::getFunc() {
+    return this->func;
+}
+
+EndFileterFuncItem::EndFileterFuncItem(std::function<void(Context &)> func, int workerNum) : FuncItem(workerNum),func(std::move(func)) {
+
+}
+
+int FuncItem::getWorkerNum() {
+    return this->workerNum;
+}
+
+FuncItem::FuncItem(int workerNum):workerNum(workerNum) {
+
+}
+

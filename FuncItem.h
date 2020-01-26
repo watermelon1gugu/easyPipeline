@@ -10,13 +10,33 @@
 
 class FuncItem {
 public:
-    FuncItem(std::function<Context (Context)> func,int wokerNum);
-    int getWokerNum();
-    std::function<Context (Context)> getFunc();
+    explicit FuncItem(int workerNum);
+
+    int getWorkerNum();
+
 private:
-    std::function<Context (Context)> func;
-    int wokerNum;
+    int workerNum;
 };
 
+class NormalWorkerFuncItem : public FuncItem {
+public:
+    NormalWorkerFuncItem(std::function<Context(Context &)> func, int workerNum);
+
+    std::function<Context(Context &)> getFunc();
+
+private:
+    std::function<Context(Context &)> func;
+};
+
+class EndFileterFuncItem : public FuncItem {
+public:
+    EndFileterFuncItem(std::function<void(Context &)> func, int workerNum);
+
+    std::function<void(Context &)> getFunc();
+
+private:
+    std::function<void(Context &)> func;
+
+};
 
 #endif //SCURMVISION_BASE_FUNCITEM_H

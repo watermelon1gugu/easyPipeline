@@ -1,6 +1,7 @@
 #include <iostream>
+#include "Context.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    Context c;
     return 0;
 }
