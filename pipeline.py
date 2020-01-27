@@ -124,7 +124,7 @@ class Context(object):
 
 class ErrorContext(Context):
     def __init__(self, msg):
-        super(Context, self).__init__()
+        super(ErrorContext, self).__init__()
         self.msg = msg
 
 
