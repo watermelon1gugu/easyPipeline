@@ -13,11 +13,3 @@ void Context::breakOff() {
     this->_isContinue = false;
 }
 
-void Context::free() {
-    //TODO 释放globalParam内存
-    std::cout<<""<<std::endl;
-}
-
-void *Context::getParam(std::string key) {
-    return this->_globalParam.
-}

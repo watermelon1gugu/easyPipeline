@@ -8,11 +8,14 @@
 #include <unordered_map>
 
 class Context {
+    /*
+     * @Description Context基类 在流水线各个阶段之间传递。
+     *              在特定的生产线上需要继承Context并自定义属性添加直接所需要的参数以满足流水线各阶段需要
+     */
 public:
     Context()= default;
-    void free();
-    bool isContinue();
-    void breakOff();
+    bool isContinue();//判断该context是否继续传递
+    void breakOff();//终止该context
 
 private:
     bool _isContinue = true;
