@@ -15,10 +15,7 @@ public:
 
     void breakOff();
 
-    std::unordered_map<std::string, void *> *getGlobalParam();
-
 private:
-    std::unordered_map<std::string, void *> _globalParam;
     bool _isContinue = true;
 };
 
