@@ -8,48 +8,23 @@
 
 #include "Context.h"
 
-template<class T>
+template<class F>
 class FuncItem {
 public:
-    explicit FuncItem(int workerNum);
+    explicit FuncItem(F func,int workerNum):func(func),workerNum(workerNum){
+    };
+    F getFunc(){
+        return this->func;
+    };
 
-    virtual T getFunc() = 0;
-
-    int getWorkerNum();
+    int getWorkerNum(){
+        return this->workerNum;
+    };
 
 private:
     int workerNum;
+    F func;
 };
 
-template<class T>
-FuncItem<T>::FuncItem(int workerNum):workerNum(workerNum) {
-
-}
-
-template<class T>
-int FuncItem<T>::getWorkerNum() {
-    return this->workerNum;
-}
-
-class NormalWorkerFuncItem : public FuncItem<std::function<Context(Context &)>> {
-public:
-    NormalWorkerFuncItem(std::function<Context(Context &)> func, int workerNum);
-
-    std::function<Context(Context &)> getFunc() override;
-
-private:
-    std::function<Context(Context &)> func;
-};
-
-class EndFileterFuncItem : public FuncItem<std::function<void(Context &)>> {
-public:
-    EndFileterFuncItem(std::function<void(Context &)> func, int workerNum);
-
-    std::function<void(Context &)> getFunc() override;
-
-private:
-    std::function<void(Context &)> func;
-
-};
 
 #endif //SCURMVISION_BASE_FUNCITEM_H

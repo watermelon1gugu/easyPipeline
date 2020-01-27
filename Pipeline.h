@@ -19,29 +19,34 @@
 #include <thread>
 
 namespace easyPipeline {
+    template<class C>
     class Pipeline {
     public:
-        explicit Pipeline(std::vector<NormalWorkerFuncItem> &funcItems, EndFileterFuncItem  endFilterFuncItem);
-        int putTask(Context &context);
+        explicit Pipeline(std::vector<FuncItem<std::function<C(C &)>>> &funcItems,
+                          FuncItem<std::function<void(C &)>> endFilterFuncItem);
+
+        int putTask(C &context);
 
     private:
 
-        static std::function<Context(Context &)> _normalEndFilter(Context& context);
-        static void _worker(const std::function<Context(Context&)> &func, BlockingQueue<Context&> &inQueue,
-                            BlockingQueue<Context&> &outQueue);
+        static std::function<C(C &)> _normalEndFilter(C &context);
 
-        static void _endFilterWorker(const std::function<Context(Context &)> &func, BlockingQueue<Context &> &endProductQueue);
+        static void _worker(const std::function<C(C &)> &func, BlockingQueue<C &> &inQueue,
+                            BlockingQueue<C &> &outQueue);
+
+        static void
+        _endFilterWorker(const std::function<C(C &)> &func, BlockingQueue<C &> &endProductQueue);
 
         void _start();
 
 
         unsigned long stepNum;
         unsigned long queueNum;
-        EndFileterFuncItem endFilterFuncItem;        //默认调用context的析构函数以及清理所有垃圾
-        std::vector<NormalWorkerFuncItem> &funcItems;
-        std::vector<BlockingQueue<Context &>> contextQueueList;
-        BlockingQueue<Context &> &inputQueue;
-        BlockingQueue<Context &> &endProductQueue;
+        FuncItem<std::function<void(C &)>> endFilterFuncItem;        //默认调用context的析构函数以及清理所有垃圾
+        std::vector<FuncItem<std::function<C(C &)>>> &funcItems;
+        std::vector<BlockingQueue<C &>> contextQueueList;
+        BlockingQueue<C &> &inputQueue;
+        BlockingQueue<C &> &endProductQueue;
     };
 
 //class PipelineWarp{
