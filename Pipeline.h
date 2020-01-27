@@ -18,6 +18,7 @@
 #include <queue>
 #include <thread>
 #include <utility>
+#include <functional>
 
 namespace easyPipeline {
     template<class C>

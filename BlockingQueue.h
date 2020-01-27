@@ -9,6 +9,10 @@
 #include <iostream>
 #include <queue>
 #include <list>
+#include <mutex>
+#include <condition_variable>
+
+
 namespace easyPipeline {
     template<typename T>
     class BlockingQueue {
