@@ -4,7 +4,7 @@
 
 #include "FuncItem.h"
 
-FuncItem::FuncItem(Context *(*func)(Context *), int wokerNum) {
-    this->func = func;
-    this->wokerNum = wokerNum;
-}
+#include <utility>
+
+
+

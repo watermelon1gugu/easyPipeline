@@ -8,12 +8,22 @@
 
 #include "Context.h"
 
+template<class F>
 class FuncItem {
 public:
-    FuncItem(Context* (*func)(Context*),int wokerNum);
+    explicit FuncItem(F func,int workerNum):func(func),workerNum(workerNum){
+    };
+    F getFunc(){
+        return this->func;
+    };
+
+    int getWorkerNum(){
+        return this->workerNum;
+    };
+
 private:
-    Context* (*func)(Context*);
-    int wokerNum;
+    int workerNum;
+    F func;
 };
 
 

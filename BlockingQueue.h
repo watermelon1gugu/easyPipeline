@@ -9,47 +9,47 @@
 #include <iostream>
 #include <queue>
 #include <list>
+namespace easyPipeline {
+    template<typename T>
+    class BlockingQueue {
+    public:
+        BlockingQueue() : _mutex(), _condvar(), _queue() {
 
-template<typename T>
-class BlockingQueue {
-public:
-    BlockingQueue() : _mutex(), _condvar(), _queue() {
-
-    }
-
-    void put(const T &task) {
-        {
-            std::lock_guard<std::mutex> lock(_mutex);
-            _queue.push_back(task);
         }
-        _condvar.notify_all();
-    }
 
-    T get() {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _condvar.wait(lock, [this] { return !_queue.empty(); });
-        assert (!_queue.empty());
-        T front(_queue.front());
-        _queue.pop_front();
+        void put(const T &task) {
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+                _queue.push_back(task);
+            }
+            _condvar.notify_all();
+        }
 
-        return front;
-    }
+        T get() {
+            std::unique_lock<std::mutex> lock(_mutex);
+            _condvar.wait(lock, [this] { return !_queue.empty(); });
+            assert (!_queue.empty());
+            T front(_queue.front());
+            _queue.pop_front();
 
-    size_t Size() const {
-        std::lock_guard<std::mutex> lock(_mutex);
-        return _queue.size();
-    }
+            return front;
+        }
 
-private:
-    BlockingQueue(const BlockingQueue &rhs);
+        size_t Size() const {
+            std::lock_guard<std::mutex> lock(_mutex);
+            return _queue.size();
+        }
 
-    BlockingQueue &operator=(const BlockingQueue &rhs);
+    private:
+        BlockingQueue(const BlockingQueue &rhs);
 
-private:
-    mutable std::mutex _mutex;
-    std::condition_variable _condvar;
-    std::list<T> _queue;
-};
+        BlockingQueue &operator=(const BlockingQueue &rhs);
 
+    private:
+        mutable std::mutex _mutex;
+        std::condition_variable _condvar;
+        std::list<T> _queue;
+    };
+}
 
 #endif //SCURMVISION_BASE_BLOCKINGQUEUE_H

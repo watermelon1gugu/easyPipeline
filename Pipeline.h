@@ -16,29 +16,44 @@
 #include <typeinfo>
 #include <list>
 #include <queue>
+#include <thread>
 
-class Pipeline {
-public:
-    int putTask(Context context);
+namespace easyPipeline {
+    template<class C>
+    class Pipeline {
+    public:
+        explicit Pipeline(std::vector<FuncItem<std::function<C(C &)>>> &funcItems,
+                          FuncItem<std::function<void(C &)>> endFilterFuncItem);
 
-private:
-    void resultFilter(Context context);
+        int putTask(C &context);
 
-    explicit Pipeline(std::list<FuncItem> funcItems);
+    private:
 
-    static void _worker(Context(*func)(Context), BlockingQueue<Context> &&inQueue, BlockingQueue<Context> &&outQueue);
+        static std::function<C(C &)> _normalEndFilter(C &context);
 
-    void _start();
+        static void _worker(const std::function<C(C &)> &func, BlockingQueue<C &> &inQueue,
+                            BlockingQueue<C &> &outQueue);
 
-    std::list<FuncItem> funcItems;
-    std::list<std::queue<Context*>> contextQueueList;
+        static void
+        _endFilterWorker(const std::function<C(C &)> &func, BlockingQueue<C &> &endProductQueue);
 
-};
+        void _start();
+
+
+        unsigned long stepNum;
+        unsigned long queueNum;
+        FuncItem<std::function<void(C &)>> endFilterFuncItem;        //默认调用context的析构函数以及清理所有垃圾
+        std::vector<FuncItem<std::function<C(C &)>>> &funcItems;
+        std::vector<BlockingQueue<C &>> contextQueueList;
+        BlockingQueue<C &> &inputQueue;
+        BlockingQueue<C &> &endProductQueue;
+    };
+
 //class PipelineWarp{
 //public:
 //    PipelineWarp firstStep();
 //
 //private:
 //};
-
+}
 #endif //SCURMVISION_BASE_PIPELINE_H
