@@ -33,11 +33,11 @@ namespace easyPipeline {
 
         static std::function<C(C &)> _normalEndFilter(C &context);
 
-        static void _worker(const std::function<C(C &)> &func, BlockingQueue<C &> &inQueue,
-                            BlockingQueue<C &> &outQueue);
+        static void _worker(const std::function<C(C &)> &func, BlockingQueue<C> &inQueue,
+                            BlockingQueue<C> &outQueue);
 
         static void
-        _endFilterWorker(const std::function<C(C &)> &func, BlockingQueue<C &> &endProductQueue);
+        _endFilterWorker(const std::function<C(C &)> &func, BlockingQueue<C> &endProductQueue);
 
         void _start();
 
@@ -46,9 +46,9 @@ namespace easyPipeline {
         unsigned long queueNum;
         FuncItem<std::function<void(C &)>> endFilterFuncItem;        //默认调用context的析构函数以及清理所有垃圾
         std::vector<FuncItem<std::function<C(C &)>>> &funcItems;
-        std::vector<BlockingQueue<C &>> contextQueueList;
-        BlockingQueue<C &> &inputQueue;
-        BlockingQueue<C &> &endProductQueue;
+        std::vector<BlockingQueue<C>> contextQueueList;
+        BlockingQueue<C> &inputQueue;
+        BlockingQueue<C> &endProductQueue;
     };
 
 //class PipelineWarp{
@@ -72,7 +72,7 @@ namespace easyPipeline {
                           FuncItem<std::function<void(C&)>> endFilterFuncItem)
             : stepNum(funcItems.size()),
               queueNum(stepNum + 1),
-              contextQueueList(std::vector<BlockingQueue<C &>>(queueNum, BlockingQueue<C &>())),
+              contextQueueList(std::vector<BlockingQueue<C>>(queueNum, BlockingQueue<C>())),
               funcItems(funcItems),
               inputQueue(this->contextQueueList.front()),
               endProductQueue(this->contextQueueList.back()),
@@ -82,8 +82,8 @@ namespace easyPipeline {
     }
 
     template<class C>
-    void Pipeline<C>::_worker(const std::function<C(C &)> &func, BlockingQueue<C &> &inQueue,
-                              BlockingQueue<C &> &outQueue) {
+    void Pipeline<C>::_worker(const std::function<C(C &)> &func, BlockingQueue<C> &inQueue,
+                              BlockingQueue<C> &outQueue) {
         try {
             while (true) {
                 C context = inQueue.get();
@@ -121,7 +121,7 @@ namespace easyPipeline {
 
     template<class C>
     void Pipeline<C>::_endFilterWorker(const std::function<C(C &)> &func,
-                                       BlockingQueue<C &> &endProductQueue) {
+                                       BlockingQueue<C> &endProductQueue) {
         try {
             while (true) {
                 C context = endProductQueue.get();
