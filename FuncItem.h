@@ -21,6 +21,16 @@ private:
     int workerNum;
 };
 
+template<class T>
+FuncItem<T>::FuncItem(int workerNum):workerNum(workerNum) {
+
+}
+
+template<class T>
+int FuncItem<T>::getWorkerNum() {
+    return this->workerNum;
+}
+
 class NormalWorkerFuncItem : public FuncItem<std::function<Context(Context &)>> {
 public:
     NormalWorkerFuncItem(std::function<Context(Context &)> func, int workerNum);

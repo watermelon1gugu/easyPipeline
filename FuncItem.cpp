@@ -23,11 +23,3 @@ EndFileterFuncItem::EndFileterFuncItem(std::function<void(Context &)> func, int 
 
 }
 
-int FuncItem::getWorkerNum() {
-    return this->workerNum;
-}
-
-FuncItem::FuncItem(int workerNum):workerNum(workerNum) {
-
-}
-

@@ -13,11 +13,11 @@ namespace easyPipeline {
         return 0;
     }
 
-    Pipeline::Pipeline(std::list<NormalWorkerFuncItem> &funcItems,
+    Pipeline::Pipeline(std::vector<NormalWorkerFuncItem> &funcItems,
                        EndFileterFuncItem endFilterFuncItem = EndFileterFuncItem(_normalEndFilter, 2))
             : stepNum(funcItems.size()),
               queueNum(stepNum + 1),
-              contextQueueList(std::list<BlockingQueue<Context &>>(queueNum, BlockingQueue<Context &>())),
+              contextQueueList(std::vector<BlockingQueue<Context &>>(queueNum, BlockingQueue<Context &>())),
               funcItems(funcItems),
               inputQueue(this->contextQueueList.front()),
               endProductQueue(this->contextQueueList.back()),
@@ -50,22 +50,22 @@ namespace easyPipeline {
         for (auto &funcItem:funcItems) {
             for (int i = 0; i < funcItem.getWorkerNum(); i++) {
                 //可在此次对传入函数进行修饰
-                workerList.emplace_back(std::thread(funcItem.getFunc()));
+                workerList.emplace_back(std::thread(_worker,funcItem.getFunc(),this->contextQueueList[i],this->contextQueueList[i+1]));
             }
         }
         for(int i =0;i<this->endFilterFuncItem.getWorkerNum();i++){
-            workerList.emplace_back(std::thread(this->endFilterFuncItem.getFunc()));
+            workerList.emplace_back(std::thread(std::thread(_endFilterWorker,this->endFilterFuncItem.getFunc(),this->endProductQueue)));
         }
         for (auto &worker : workerList) {
             worker.detach();
         }
     }
 
-    void Pipeline::endFilterWrap() {
+     void Pipeline::_endFilterWorker(const std::function<Context(Context &)> &func, BlockingQueue<Context &> &endProductQueue) {
         try {
             while (true) {
-                Context context = this->endProductQueue.get();
-                this->endFilterFuncItem.getFunc()(context);
+                Context context = endProductQueue.get();
+                func(context);
             }
         } catch (...) {
 

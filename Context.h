@@ -12,7 +12,6 @@ public:
     Context()= default;
     void free();
     bool isContinue();
-
     void breakOff();
 
 private:
