@@ -29,6 +29,8 @@ namespace easyPipeline {
 
         int putTask(C &context);
 
+        ~Pipeline();
+
     private:
 
         static std::function<C(C &)> _normalEndFilter(C &context);
@@ -44,11 +46,12 @@ namespace easyPipeline {
 
         unsigned long stepNum;
         unsigned long queueNum;
+        BlockingQueue<C> *contextQueueList;
         FuncItem<std::function<void(C &)>> endFilterFuncItem;        //默认调用context的析构函数以及清理所有垃圾
         std::vector<FuncItem<std::function<C(C &)>>> &funcItems;
-        std::vector<BlockingQueue<C>> contextQueueList;
         BlockingQueue<C> &inputQueue;
         BlockingQueue<C> &endProductQueue;
+
     };
 
 //class PipelineWarp{
@@ -68,17 +71,21 @@ namespace easyPipeline {
     }
 
     template<class C>
-    Pipeline<C>::Pipeline(std::vector<FuncItem<std::function<C(C&)>>> &funcItems,
-                          FuncItem<std::function<void(C&)>> endFilterFuncItem)
+    Pipeline<C>::Pipeline(std::vector<FuncItem<std::function<C(C &)>>> &funcItems,
+                          FuncItem<std::function<void(C &)>> endFilterFuncItem)
             : stepNum(funcItems.size()),
               queueNum(stepNum + 1),
-              contextQueueList(std::vector<BlockingQueue<C>>(queueNum, BlockingQueue<C>())),
+              contextQueueList(new BlockingQueue<C>[queueNum]),
               funcItems(funcItems),
-              inputQueue(this->contextQueueList.front()),
-              endProductQueue(this->contextQueueList.back()),
+              inputQueue(contextQueueList[0]),
+              endProductQueue(contextQueueList[queueNum-1]),
               endFilterFuncItem(std::move(endFilterFuncItem)) {
-
         this->_start();
+    }
+
+    template<class C>
+    Pipeline<C>::~Pipeline() {
+        delete[] this->contextQueueList;
     }
 
     template<class C>

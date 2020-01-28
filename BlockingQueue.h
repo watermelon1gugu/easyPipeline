@@ -44,10 +44,10 @@ namespace easyPipeline {
             return _queue.size();
         }
 
-    private:
-        BlockingQueue(const BlockingQueue &rhs);
+    public:
+        BlockingQueue(const BlockingQueue &rhs)= default;
 
-        BlockingQueue &operator=(const BlockingQueue &rhs);
+        BlockingQueue &operator=(const BlockingQueue &rhs)= default;
 
     private:
         mutable std::mutex _mutex;
