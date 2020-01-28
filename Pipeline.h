@@ -35,11 +35,11 @@ namespace easyPipeline {
 
         static std::function<C(C &)> _normalEndFilter(C &context);
 
-        static void _worker(const std::function<C(C &)> &func, BlockingQueue<C> &inQueue,
-                            BlockingQueue<C> &outQueue);
+        static void _worker(const std::function<C(C &)> &func, BlockingQueue<C> *inQueue,
+                            BlockingQueue<C> *outQueue);
 
         static void
-        _endFilterWorker(const std::function<C(C &)> &func, BlockingQueue<C> &endProductQueue);
+        _endFilterWorker(const std::function<void(C &)> &func, BlockingQueue<C> *endProductQueue);
 
         void _start();
 
@@ -78,7 +78,7 @@ namespace easyPipeline {
               contextQueueList(new BlockingQueue<C>[queueNum]),
               funcItems(funcItems),
               inputQueue(contextQueueList[0]),
-              endProductQueue(contextQueueList[queueNum-1]),
+              endProductQueue(contextQueueList[queueNum - 1]),
               endFilterFuncItem(std::move(endFilterFuncItem)) {
         this->_start();
     }
@@ -89,16 +89,16 @@ namespace easyPipeline {
     }
 
     template<class C>
-    void Pipeline<C>::_worker(const std::function<C(C &)> &func, BlockingQueue<C> &inQueue,
-                              BlockingQueue<C> &outQueue) {
+    void Pipeline<C>::_worker(const std::function<C(C &)> &func, BlockingQueue<C> *inQueue,
+                              BlockingQueue<C> *outQueue) {
         try {
             while (true) {
-                C context = inQueue.get();
+                C context = inQueue->get();
                 context = func(context);
                 if (!context.isContinue()) {
                     continue;
                 } else {
-                    outQueue.put(context);
+                    outQueue->put(context);
                 }
             }
         } catch (...) {
@@ -113,13 +113,14 @@ namespace easyPipeline {
         for (auto &funcItem:funcItems) {
             for (int i = 0; i < funcItem.getWorkerNum(); i++) {
                 //可在此次对传入函数进行修饰
-                workerList.emplace_back(std::thread(_worker, funcItem.getFunc(), this->contextQueueList[i],
-                                                    this->contextQueueList[i + 1]));
+                workerList.push_back(std::thread(_worker, funcItem.getFunc(), &this->contextQueueList[i],
+                                                 &this->contextQueueList[i + 1]));
             }
         }
+        std::list<std::thread> endFilterWorkerList = std::list<std::thread>();
         for (int i = 0; i < this->endFilterFuncItem.getWorkerNum(); i++) {
-            workerList.emplace_back(std::thread(
-                    std::thread(_endFilterWorker, this->endFilterFuncItem.getFunc(), this->endProductQueue)));
+            workerList.push_back(std::thread(
+                    _endFilterWorker, this->endFilterFuncItem.getFunc(), &this->endProductQueue));
         }
         for (auto &worker : workerList) {
             worker.detach();
@@ -127,11 +128,11 @@ namespace easyPipeline {
     }
 
     template<class C>
-    void Pipeline<C>::_endFilterWorker(const std::function<C(C &)> &func,
-                                       BlockingQueue<C> &endProductQueue) {
+    void Pipeline<C>::_endFilterWorker(const std::function<void(C &)> &func,
+                                       BlockingQueue<C> *endProductQueue) {
         try {
             while (true) {
-                C context = endProductQueue.get();
+                C context = endProductQueue->get();
                 func(context);
             }
         } catch (...) {
