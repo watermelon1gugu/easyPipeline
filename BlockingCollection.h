@@ -24,7 +24,7 @@
 #include <deque>
 #include <algorithm>
 
-namespace code_machina {
+namespace easyPipeline {
 
     template <typename ConditionVarType,  typename LockType>
     struct ConditionVarTraits;
