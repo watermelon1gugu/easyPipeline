@@ -63,11 +63,10 @@ int main() {
     typedef FuncItem<EndFilterFunc> EndFilterFuncItem;
 
     std::vector<NormalFuncItem> funcitems{
-            NormalFuncItem(NormalFunc(func1), 2),
-            NormalFuncItem(NormalFunc(func2), 2),
-            NormalFuncItem(NormalFunc(func2), 2),
-            NormalFuncItem(NormalFunc(func2), 2),
-
+            NormalFuncItem(func1, 2),
+            NormalFuncItem(func2, 2),
+            NormalFuncItem(func2, 2),
+            NormalFuncItem(func2, 2),
     };
     EndFilterFuncItem endFilterFuncitem = EndFilterFuncItem(EndFilterFunc(endFilterFunc), 2);
 
