@@ -3,4 +3,4 @@ project(easyPipeline)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(PPL main.cpp Context.h Context.cpp FuncItem.cpp FuncItem.h Pipeline.cpp Pipeline.h)
+add_executable(easyPipeline main.cpp Context.h Context.cpp FuncItem.cpp FuncItem.h Pipeline.cpp Pipeline.h StreamPipeline.h)

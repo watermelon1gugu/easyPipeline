@@ -46,7 +46,7 @@ namespace easyPipeline {
 
         unsigned long stepNum;
         unsigned long queueNum;
-        BlockingQueue<C *> *contextQueueList;
+        std::vector<BlockingQueue<C *>> contextQueueList;
         FuncItem<std::function<void(C *)>> endFilterFuncItem;        //默认调用context的析构函数以及清理所有垃圾
         std::vector<FuncItem<std::function<C*(C *)>>> &funcItems;
         BlockingQueue<C *> &inputQueue;
@@ -75,7 +75,7 @@ namespace easyPipeline {
                           FuncItem<std::function<void(C *)>> endFilterFuncItem)
             : stepNum(funcItems.size()),
               queueNum(stepNum + 1),
-              contextQueueList(new BlockingQueue<C *>[queueNum]),
+              contextQueueList(std::vector<BlockingQueue<C *>>(queueNum)),
               funcItems(funcItems),
               inputQueue(contextQueueList[0]),
               endProductQueue(contextQueueList[queueNum - 1]),
@@ -85,7 +85,6 @@ namespace easyPipeline {
 
     template<class C>
     Pipeline<C>::~Pipeline() {
-        delete[] this->contextQueueList;
     }
 
     template<class C>
@@ -136,6 +135,7 @@ namespace easyPipeline {
                 C *context;
                 endProductQueue->take(context);
                 func(context);
+                delete(context);
             }
         } catch (...) {
 
@@ -144,6 +144,7 @@ namespace easyPipeline {
 
     template<class C>
     std::function<C*(C *)> Pipeline<C>::_normalEndFilter(C *c) {
+        //TODO 写个默认filter
     }
 }
 #endif //SCURMVISION_BASE_PIPELINE_H

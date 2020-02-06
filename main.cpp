@@ -52,7 +52,6 @@ TestContext *func2(TestContext *c) {
 
 void endFilterFunc(TestContext *c) {
     c->print();
-    delete c;
 }
 
 int main() {
@@ -65,18 +64,16 @@ int main() {
     std::vector<NormalFuncItem> funcitems{
             NormalFuncItem(func1, 2),
             NormalFuncItem(func2, 2),
-            NormalFuncItem(func2, 2),
-            NormalFuncItem(func2, 2),
     };
     EndFilterFuncItem endFilterFuncitem = EndFilterFuncItem(EndFilterFunc(endFilterFunc), 2);
 
     Pipeline<TestContext> p(funcitems, endFilterFuncitem);
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1; i++) {
         TestContext *context = new TestContext(i);
         p.putTask(context);
     }
-    usleep(1000000);
+    usleep(100000000);
 
     return 0;
 }
