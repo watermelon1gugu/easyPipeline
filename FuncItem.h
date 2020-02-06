@@ -8,22 +8,23 @@
 
 #include "Context.h"
 
-template<class F>
+template<typename FUN_RESULT, typename ... FUN_ARGS>
 class FuncItem {
 public:
-    explicit FuncItem(F func,int workerNum):func(func),workerNum(workerNum){
+    explicit FuncItem(std::function<FUN_RESULT(FUN_ARGS ... args)> func, int workerNum) : func(func), workerNum(workerNum) {
     };
-    F getFunc(){
+
+    std::function<FUN_RESULT(FUN_ARGS ... args)> getFunc() {
         return this->func;
     };
 
-    int getWorkerNum(){
+    int getWorkerNum() {
         return this->workerNum;
     };
 
 private:
     int workerNum;
-    F func;
+    std::function<FUN_RESULT(FUN_ARGS ... args)> func;
 };
 
 

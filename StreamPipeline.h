@@ -14,7 +14,9 @@
 #include <utility>
 #include <functional>
 #include "BlockingCollection.h"
-
+/*
+ * TODO 编写transform方法和endPipe方法传入参数，接收参数为func和并发数
+ */
 namespace easyPipeline {
     template<class C>
     class StreamPipeline {
