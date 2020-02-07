@@ -3,6 +3,7 @@
 #include "Pipeline.h"
 #include <utility>
 #include <zconf.h>
+#include "StreamPipeline.h"
 
 using namespace easyPipeline;
 using namespace std;
@@ -57,24 +58,36 @@ void endFilterFunc(TestContext *c) {
 }
 
 int main() {
-    typedef FuncItem<TestContext *, TestContext *> NormalFuncItem;
-    typedef FuncItem<void, TestContext *> EndFilterFuncItem;
-
-    vector<FuncItem<TestContext *, TestContext *>> funcitems{
-            NormalFuncItem(func1, 2),
-            NormalFuncItem(func2, 2),
-            NormalFuncItem(func2, 2),
-            NormalFuncItem(func2, 2),
-    };
-    EndFilterFuncItem endFilterFuncitem = EndFilterFuncItem(endFilterFunc, 2);
-
-    Pipeline<TestContext> p(funcitems, endFilterFuncitem);
-
+    StreamPipeline<TestContext> sp;
+    sp.doAndTransform(func1,2)
+    .doAndTransform(func2,2)
+    .endPipeLine(endFilterFunc,2)
+    .start();
     for (int i = 0; i < 1000; i++) {
         TestContext *context = new TestContext(i);
-        p.putTask(context);
+        sp.putTask(context);
     }
     usleep(100000000);
-
-    return 0;
 }
+//int main() {
+//    typedef FuncItem<TestContext *, TestContext *> NormalFuncItem;
+//    typedef FuncItem<void, TestContext *> EndFilterFuncItem;
+//
+//    vector<FuncItem<TestContext *, TestContext *>> funcitems{
+//            NormalFuncItem(func1, 2),
+//            NormalFuncItem(func2, 2),
+//            NormalFuncItem(func2, 2),
+//            NormalFuncItem(func2, 2),
+//    };
+//    EndFilterFuncItem endFilterFuncitem = EndFilterFuncItem(endFilterFunc, 2);
+//
+//    Pipeline<TestContext> p(funcitems, endFilterFuncitem);
+//
+//    for (int i = 0; i < 1000; i++) {
+//        TestContext *context = new TestContext(i);
+//        p.putTask(context);
+//    }
+//    usleep(100000000);
+//
+//    return 0;
+//}
