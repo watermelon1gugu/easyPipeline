@@ -59,10 +59,11 @@ void endFilterFunc(TestContext *c) {
 
 int main() {
     StreamPipeline<TestContext> sp;
-    sp.doAndTransform(func1,2)
-    .doAndTransform(func2,2)
-    .endPipeLine(endFilterFunc,2)
-    .start();
+    sp.doAndTransform(func1, 2)
+            .doAndTransform(func2, 2)
+            .doAndTransform(func2, 2)
+            .endPipeLine(endFilterFunc, 2)
+            .start();
     for (int i = 0; i < 1000; i++) {
         TestContext *context = new TestContext(i);
         sp.putTask(context);
